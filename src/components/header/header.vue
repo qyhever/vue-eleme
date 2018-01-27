@@ -17,12 +17,12 @@
         			<span class="text">{{seller.supports[0].description}}</span>
         		</div>
         	</div>
-        	<div class="support-count" v-if="seller.supports">
+        	<div class="support-count" v-if="seller.supports" @click="showDetail">
         		<span class="count">{{seller.supports.length}}个</span>
         		<i class="icon-keyboard_arrow_right"></i>
         	</div>
         </div>
-        <div class="bulletin-wrap">
+        <div class="bulletin-wrap" @click="showDetail">
         	<span class="bulletin-title"></span>
         	<span class="bulletin-text">{{seller.bulletin}}</span>
         	<i class="icon-keyboard_arrow_right"></i>
@@ -31,7 +31,12 @@
         	<img :src="seller.avatar" alt="" width="100%" height="100%">
         </div>
         <div class="detail" v-show="detailShow">
-        	
+        	<div class="detail-wrap clearfix">
+        		<div class="detail-main"></div>
+        	</div>
+        	<div class="detail-close">
+        		<i class="icon-close"></i>
+        	</div>
         </div>
     </div>
 </template>
@@ -53,6 +58,11 @@
             	classMap: ['decrease', 'discount', 'special', 'invoice', 'guarantee'],
             	detailShow: false
             };
+        },
+        methods: {
+        	showDetail() {
+        		this.detailShow = !this.detailShow;
+        	}
         }
     }
 </script>
@@ -180,4 +190,15 @@
 			bottom: 0
 			overflow: auto
 			background: rgba(7,17,27,.8)
+			.detail-wrap
+				min-height: 100%
+				.detail-main
+					margin-top: 64px
+					padding-bottom: 64px
+			.detail-close
+					position: relative
+					width: 32px
+					height: 32px
+					margin: -64px auto 0
+					font-size: 32px
 </style>
