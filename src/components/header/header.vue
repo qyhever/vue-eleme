@@ -32,7 +32,10 @@
         </div>
         <div class="detail" v-show="detailShow">
         	<div class="detail-wrap clearfix">
-        		<div class="detail-main"></div>
+        		<div class="detail-main">
+        			<h1 class="name">{{seller.name}}</h1>
+        			<v-star :size="48" :score="4.5"></v-star>
+        		</div>
         	</div>
         	<div class="detail-close">
         		<i class="icon-close"></i>
@@ -42,7 +45,9 @@
 </template>
 
 <script>
+	import VStar from 'components/star/star';
     export default {
+    	components: { VStar },
     	props: {
     		seller: {
     			type: Object,
@@ -73,6 +78,7 @@
 		position: relative
 		color: #fff
 		background: rgba(7,17,27,.5)
+		overflow: hidden
 		.content-wrap
 			position: relative
 			padding: 24px 12px 18px 24px
@@ -191,10 +197,16 @@
 			overflow: auto
 			background: rgba(7,17,27,.8)
 			.detail-wrap
+				width: 100%
 				min-height: 100%
 				.detail-main
 					margin-top: 64px
 					padding-bottom: 64px
+					.name
+						line-height: 16px
+						text-align: center
+						font-size: 16px
+						font-weight: 700
 			.detail-close
 					position: relative
 					width: 32px
