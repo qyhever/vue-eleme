@@ -3,16 +3,17 @@
 		<div class="content">
 			<div class="content-left">
 				<div class="logo-wrap">
-					<div class="logo">
-						<i class="icon-shopping_cart"></i>
+					<div class="logo" :class="{'high-light': totalCount > 0}">
+						<i class="icon-shopping_cart" :class="{'high-light': totalCount > 0}"></i>
 					</div>
+					<div class="num" v-show="totalCount > 0">{{totalCount}}</div>
 				</div>
-				<div class="price">￥0</div>
+				<div class="price" :class="{'high-light': totalPrice > 0}">￥{{totalPrice}}</div>
 				<div class="desc">另需配送费￥{{deliveryPrice}}</div>
 			</div>
-			<div class="content-right">
+			<div class="content-right" :class="payClass">
 				<p class="pay">
-					￥{{minPrice}}元起送
+					{{payDesc}}
 				</p>
 			</div>
 		</div>
@@ -21,6 +22,13 @@
 <script>
 export default {
 	props: {
+		selectFoods: {
+			type: Array,
+			default() {
+				return [{price:10,count:1}];
+			},
+			// required: true
+		},
 		deliveryPrice: {
 			type: Number,
 			default: 0,
@@ -37,9 +45,43 @@ export default {
 
         };
     },
+    computed: {
+    	totalPrice() {
+    		let total = 0;
+    		this.selectFoods.forEach((item) => {
+    			total += item.price * item.count;
+    		});
+    		return total;
+    	},
+    	totalCount() {
+    		let count = 0;
+    		this.selectFoods.forEach((item) => {
+    			count += item.count;
+    		});
+    		return count;
+    	},
+    	payDesc() {
+    		if (this.totalPrice === 0) {
+    			return `￥${this.minPrice}元起送`;
+    		} else if (this.totalPrice < this.minPrice) {
+    			let difference = this.minPrice - this.totalPrice;
+    			return `还差￥${difference}元起送`;
+    		} else {
+    			return `去结算`;
+    		}
+    	},
+    	payClass() {
+    		// if (this.totalPrice < this.minPrice) {
+    		// 	return 'not-enough';
+    		// } else {
+    		// 	return 'enough';
+    		// }
+    		return this.totalPrice < this.minPrice ? 'not-enough' : 'enough'; 
+    	}
+    },
     created() {
     	// console.info(this.deliveryPrice, this.minPrice)
-    }
+    },
 }
 </script>
 <style scoped lang="stylus">
@@ -69,16 +111,34 @@ export default {
 					padding: 6px
 					border-radius: 50%
 					background: #141d27
+					.num
+						position: absolute
+						top: 0
+						right: 0
+						width: 24px
+						height: 16px
+						border-radius: 16px
+						background: #f00
+						box-shadow: 0 4px 8px 0 rgba(0,0,0,.4)
+						line-height: 16px
+						text-align: center
+						font-size: 9px
+						font-weight: 700
+						color: #fff
 					.logo
 						width: 100%
 						height: 100%
 						border-radius: 50%
 						background: #2b343c
 						text-align: center
+						&.high-light
+							background: rgb(0,160,220)
 						.icon-shopping_cart
 							font-size: 24px
 							line-height: 44px
 							color: #80858a
+							&.high-light
+								color: #fff
 				.price
 					display: inline-block
 					box-sizing: border-box
@@ -89,6 +149,8 @@ export default {
 					line-height: 24px
 					font-size: 16px
 					font-weight: 700
+					&.high-light
+						color: #fff
 				.desc
 					display: inline-block
 					vertical-align: top
@@ -101,7 +163,11 @@ export default {
 				justify-content: center
 				align-items: center
 				width: 105px
-				background: #2B333B
+				&.not-enough
+					background: #2B333B
+				&.enough
+					background: #00b43c
+					color: #fff
 				.pay
 					font-size: 12px
 					font-weight: 700
