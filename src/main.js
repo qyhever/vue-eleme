@@ -8,7 +8,7 @@ Vue.config.productionTip = false;
 
 // 导入重置样式
 import '../static/css/reset.css';
-import '@/common/stylus/icon.css';
+import 'common/stylus/index.styl';
 // 导入axios请求库
 import axios from 'axios';
 Vue.prototype.$axios = axios;

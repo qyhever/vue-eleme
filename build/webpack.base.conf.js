@@ -20,11 +20,12 @@ module.exports = {
             config.dev.assetsPublicPath
     },
     resolve: {
-        extensions: ['.js', '.vue', '.json'],
+        extensions: ['.js', '.vue', '.json', 'styl'],
         alias: {
             'vue$': 'vue/dist/vue.esm.js',
             '@': resolve('src'),
-            'components': path.resolve(__dirname, '../src/components')
+            'components': path.resolve(__dirname, '../src/components'),
+            'common': path.resolve(__dirname, '../src/common')
         }
     },
     module: {
@@ -63,9 +64,15 @@ module.exports = {
                 }
             }
         ],
-        loaders: [{
-            test: /\.less$/,
-            loader: 'style-loader!css-loader!less-loader'
-        }]
+        loaders: [
+            {
+                test: /\.less$/,
+                loader: 'style-loader!css-loader!less-loader'
+            },
+            { 
+              test: /\.styl$/,
+              loader: 'style-loader!css-loader!stylus-loader' 
+            }
+        ]
     }
 }
