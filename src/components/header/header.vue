@@ -227,7 +227,7 @@
 			bottom: 0
 			overflow: auto
 			background: rgba(7,17,27,.8)
-			transform: translate(0,0,0)
+			transform: translate3D(0,0,0)
 			// ios背景模糊
 			backdrop-filter: blur(10px)
 			// 过渡动画

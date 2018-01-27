@@ -31,22 +31,27 @@
 									<span class="now">￥{{food.price}}</span>
 									<s class="old" v-show="food.oldPrice">￥{{food.oldPrice}}</s>
 								</div>
+								<div class="car-control-wrap">
+									<!-- 数量组件 -->
+									<car-control :food="food"></car-control>
+								</div>
 							</div>
 						</li>
 					</ul>
 				</li>
 			</ul>
 		</div>
-
-		<shop-car :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shop-car>
+		<!-- 购物车组件 -->
+		<shop-car :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice" :select-foods="selectFoods"></shop-car>
     </div>
 </template>
 
 <script>
 import BScroll from 'better-scroll';
 import ShopCar from 'components/goods/shop-car';
+import CarControl from 'components/carcontrol/car-control';
 export default {
-	components: { ShopCar },
+	components: { ShopCar, CarControl },
 	props: {
 		seller: {
 			type: Object,
@@ -74,6 +79,17 @@ export default {
 				}
 			}
 			return 0;
+		},
+		selectFoods() {
+			let foods = [];
+			this.goods.forEach((good) => {
+				good.foods.forEach((food) => {
+					if (food.count) {
+						foods.push(food);
+					}
+				});
+			});
+				return foods;
 		}
 	},
 	methods: {
@@ -97,7 +113,8 @@ export default {
 			});
 
 			this.foodsScroll = new BScroll(this.$refs['foods-wrap'], {
-				probeType: 3 // 表示BScroll监听滚动
+				probeType: 3, // 表示BScroll监听滚动
+				click: true
 			});
 			this.foodsScroll.on('scroll', (pos) => {
 				this.scrollY = Math.abs(Math.round(pos.y));
@@ -227,4 +244,8 @@ export default {
 						.old
 							font-size: 10px
 							color: rgb(147,153,159)
+					.car-control-wrap
+						position: absolute
+						right: 0
+						bottom: 12px
 </style>
