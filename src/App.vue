@@ -1,6 +1,8 @@
 <template>
     <div>
-        <v-header></v-header>
+        <!-- header组件 -->
+        <v-header :seller="seller"></v-header>
+        <!-- tab栏 -->
         <div class="tab border-1px">
             <div class="tab-item">
                 <router-link to="/goods">商品</router-link>
@@ -12,16 +14,36 @@
                 <router-link to="/seller">商家</router-link>
             </div>
         </div>
+        <!-- 占位（路由外链） -->
         <router-view />
     </div>
 </template>
 
 <script>
     // import '@/common/stylus/mixin.styl';
-    import VHeader from './components/header/header.vue';
+    import VHeader from 'components/header/header.vue';
     export default {
         components: {
             VHeader
+        },
+        data() {
+            return {
+                seller: {}
+            };
+        },
+        created() {
+            this.getSeller();
+        },
+        methods: {
+            getSeller() {
+                const url = '/api/seller';
+                this.$axios.get(url).then((response) => {
+                    let data = response.data;
+                    if(data.status === 1) {
+                        this.seller = data.data;
+                    }
+                });
+            }
         }
     }
 </script>
