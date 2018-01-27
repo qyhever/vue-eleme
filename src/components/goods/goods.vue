@@ -37,12 +37,16 @@
 				</li>
 			</ul>
 		</div>
+
+		<shop-car :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shop-car>
     </div>
 </template>
 
 <script>
 import BScroll from 'better-scroll';
+import ShopCar from 'components/goods/shop-car';
 export default {
+	components: { ShopCar },
 	props: {
 		seller: {
 			type: Object,
