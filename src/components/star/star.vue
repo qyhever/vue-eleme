@@ -27,6 +27,9 @@ export default {
         	
         };
     },
+    created() {
+    	// console.info(typeof this.score)
+    },
     computed: {
     	starType() {
     		return 'star-' + this.size;
@@ -80,7 +83,7 @@ export default {
 				&.off
 					bg-image('star48_off')
 		&.star-36
-			.star-item:not(:last-of-type)
+			.star-item
 				width: 15px
 				height: 15px
 				margin-right: 6px
@@ -94,7 +97,7 @@ export default {
 				&.off
 					bg-image('star36_off')
 		&.star-24
-			.star-item:not(:last-of-type)
+			.star-item
 				width: 10px
 				height: 10px
 				margin-right: 3px
