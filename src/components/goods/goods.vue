@@ -48,7 +48,7 @@
 
 <script>
 import BScroll from 'better-scroll';
-import ShopCar from 'components/goods/shop-car';
+import ShopCar from 'components/shopcar/shop-car';
 import CarControl from 'components/carcontrol/car-control';
 export default {
 	components: { ShopCar, CarControl },

@@ -1,6 +1,6 @@
 <template>
     <div class="shopcar">
-		<div class="content">
+		<div class="content" @click="toggleList">
 			<div class="content-left">
 				<div class="logo-wrap">
 					<div class="logo" :class="{'high-light': totalCount > 0}">
@@ -17,10 +17,35 @@
 				</p>
 			</div>
 		</div>
+
+		<transition name="fold">
+			<div class="shopcar-list" v-show="listShow">
+				<div class="list-header">
+					<h1 class="title">购物车</h1>
+					<span class="empty">清空</span>
+				</div>
+				<div class="list-content">
+					<ul>
+						<li class="food" v-for="(food, index) in selectFoods" :key="index">
+							<span class="name">{{food.name}}</span>
+							<div class="price">
+								<span>￥{{food.price * food.count}}</span>
+							</div>
+							<div class="car-control-wrap">
+								<!-- 输入数量组件 -->
+								<car-control :food="food"></car-control>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</transition>
     </div>
 </template>
 <script>
+import CarControl from 'components/carcontrol/car-control';
 export default {
+	components: { CarControl },
 	props: {
 		selectFoods: {
 			type: Array,
@@ -42,7 +67,7 @@ export default {
 	},
     data() {
         return {
-
+        	fold: true // 是否折叠
         };
     },
     computed: {
@@ -77,14 +102,32 @@ export default {
     		// 	return 'enough';
     		// }
     		return this.totalPrice < this.minPrice ? 'not-enough' : 'enough'; 
+    	},
+    	listShow() {
+    		if (!this.totalCount) { // 如果没有商品，应该折叠，不显示
+    			this.fold = true;
+    			return false;
+    		}
+    		let show = !this.fold;
+    		return show;
     	}
+
     },
     created() {
     	// console.info(this.deliveryPrice, this.minPrice)
     },
+    methods: {
+    	toggleList() {
+    		if (!this.totalCount) { // 没有商品，直接退出
+    			return;
+    		}
+    		this.fold = !this.fold;
+    	}
+    }
 }
 </script>
 <style scoped lang="stylus">
+@import '../../common/stylus/mixin';
 	.shopcar
 		z-index: 50
 		position: fixed
@@ -171,4 +214,50 @@ export default {
 				.pay
 					font-size: 12px
 					font-weight: 700
+		.shopcar-list
+			z-index: -1 
+			position: absolute
+			top: 0
+			left: 0
+			width: 100%
+			transition: all .5s
+			transform: translate3d(0, -100%, 0)
+			&.fold-enter, &.fold-leave-to
+				transform: translate3d(0, 0, 0)
+			.list-header
+				height: 40px
+				padding: 0 18px
+				border-bottom: 1px solid rgba(7,17,27,.1)
+				background: #f3f5f7
+				line-height: 40px
+				.title
+					float: left
+					font-size: 14px
+					color: rgb(7,17,27)
+				.empty
+					float: right
+					font-size: 12px
+					color: rgb(0,160,220)
+			.list-content
+				max-height: 217px
+				overflow: hidden
+				padding: 0 18px
+				background: #fff
+				.food
+					display: flex
+					align-items: center
+					box-sizing: border-box
+					padding: 12px 0
+					border-1px(rgba(7,17,27,.1))
+					.name
+						flex: 1
+						font-size: 14px
+						color: rgb(7,17,27)
+					.price
+						flex: 0 0 40px
+						font-size: 14px
+						font-weight: 700
+						color: #e92322
+						.car-control-wrap
+							flex: 0 0 120px
 </style>
