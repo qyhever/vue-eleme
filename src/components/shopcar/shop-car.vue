@@ -1,48 +1,55 @@
 <template>
-    <div class="shopcar">
-		<div class="content" @click="toggleList">
-			<div class="content-left">
-				<div class="logo-wrap">
-					<div class="logo" :class="{'high-light': totalCount > 0}">
-						<i class="icon-shopping_cart" :class="{'high-light': totalCount > 0}"></i>
+	<div>
+	    <div class="shopcar">
+			<div class="content">
+				<div class="content-left">
+					<div class="logo-wrap" @click="toggleList">
+						<div class="logo" :class="{'high-light': totalCount > 0}">
+							<i class="icon-shopping_cart" :class="{'high-light': totalCount > 0}"></i>
+						</div>
+						<div class="num" v-show="totalCount > 0">{{totalCount}}</div>
 					</div>
-					<div class="num" v-show="totalCount > 0">{{totalCount}}</div>
+					<div class="price" :class="{'high-light': totalPrice > 0}">￥{{totalPrice}}</div>
+					<div class="desc">另需配送费￥{{deliveryPrice}}</div>
 				</div>
-				<div class="price" :class="{'high-light': totalPrice > 0}">￥{{totalPrice}}</div>
-				<div class="desc">另需配送费￥{{deliveryPrice}}</div>
+				<div class="content-right" :class="payClass">
+					<p class="pay">
+						{{payDesc}}
+					</p>
+				</div>
 			</div>
-			<div class="content-right" :class="payClass">
-				<p class="pay">
-					{{payDesc}}
-				</p>
-			</div>
-		</div>
 
-		<transition name="fold">
-			<div class="shopcar-list" v-show="listShow">
-				<div class="list-header">
-					<h1 class="title">购物车</h1>
-					<span class="empty">清空</span>
+			<transition name="fold">
+				<div class="shopcar-list" v-show="listShow">
+					<div class="list-header">
+						<h1 class="title">购物车</h1>
+						<span class="empty" @click="empty">清空</span>
+					</div>
+					<div class="list-content" ref="list-content">
+						<ul>
+							<li class="food" v-for="(food, index) in selectFoods" :key="index">
+								<span class="name">{{food.name}}</span>
+								<div class="price">
+									<span>￥{{food.price * food.count}}</span>
+								</div>
+								<div class="car-control-wrap">
+									<!-- 输入数量组件 -->
+									<car-control :food="food"></car-control>
+								</div>
+							</li>
+						</ul>
+					</div>
 				</div>
-				<div class="list-content">
-					<ul>
-						<li class="food" v-for="(food, index) in selectFoods" :key="index">
-							<span class="name">{{food.name}}</span>
-							<div class="price">
-								<span>￥{{food.price * food.count}}</span>
-							</div>
-							<div class="car-control-wrap">
-								<!-- 输入数量组件 -->
-								<car-control :food="food"></car-control>
-							</div>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</transition>
+			</transition>
+	    </div>
+
+		<transition name="fade">
+	    	<div class="list-mask" v-show="listShow" @click="hideList"></div>
+	    </transition>
     </div>
 </template>
 <script>
+import BScroll from 'better-scroll';
 import CarControl from 'components/carcontrol/car-control';
 export default {
 	components: { CarControl },
@@ -109,6 +116,17 @@ export default {
     			return false;
     		}
     		let show = !this.fold;
+    		if (show) { // 展示列表的时候就初始化
+    			this.$nextTick(() => {
+    				if (!this.scroll) {
+    					this.scroll = new BScroll(this.$refs['list-content'], {
+	    					click: true
+	    				});
+    				} else {
+    					this.scroll.refresh();
+    				}
+    			});
+    		}
     		return show;
     	}
 
@@ -122,6 +140,14 @@ export default {
     			return;
     		}
     		this.fold = !this.fold;
+    	},
+    	empty() {
+    		this.selectFoods.forEach((item) => {
+    			item.count = 0; // 把每个商品的数量置为0
+    		});
+    	},
+    	hideList() {
+    		this.fold = true;
     	}
     }
 }
@@ -260,4 +286,16 @@ export default {
 						color: #e92322
 						.car-control-wrap
 							flex: 0 0 120px
+	.list-mask
+		z-index: 40
+		position: fixed
+		top: 0
+		left: 0
+		right: 0
+		bottom: 0
+		background: rgba(7,17,27,.6)
+		transition: all .4s
+		&.fade-enter, &.fade-leave-to
+			opacity: 0
+			background: rgba(7,17,27,0)
 </style>
