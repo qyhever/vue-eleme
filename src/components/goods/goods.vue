@@ -1,57 +1,63 @@
 <template>
-    <div class="goods">
-		<div class="menu-wrap" ref="menu-wrap">
-			<ul>
-				<li class="menu-item" :class="{'current': currentIndex === index}" v-for="(item, index) in goods" :key="index" @click="selectMenu(index, $event)">
-					<span class="text border-1px">
-						<span class="icon" :class="classMap[item.type]" v-show="item.type > 0"></span>
-						{{item.name}}
-					</span>
-				</li>
-			</ul>
-		</div>
+	<div>
+	    <div class="goods">
+			<div class="menu-wrap" ref="menu-wrap">
+				<ul>
+					<li class="menu-item" :class="{'current': currentIndex === index}" v-for="(item, index) in goods" :key="index" @click="selectMenu(index, $event)">
+						<span class="text border-1px">
+							<span class="icon" :class="classMap[item.type]" v-show="item.type > 0"></span>
+							{{item.name}}
+						</span>
+					</li>
+				</ul>
+			</div>
 
-		<div class="foods-wrap" ref="foods-wrap">
-			<ul>
-				<li class="food-list food-list-hook" v-for="(item,index) in goods" :key="index">
-					<h1 class="title">{{item.name}}</h1>
-					<ul>
-						<li class="food-item" v-for="(food, index) in item.foods" :key="index">
-							<div class="icon">
-								<img :src="food.icon" alt="" width="57" height="57">
-							</div>
-							<div class="content">
-								<h1 class="name">{{food.name}}</h1>
-								<p class="desc">{{food.description}}</p>
-								<div class="extra">
-									<span class="count">月售{{food.sellCount}}份</span>
-									<span>好评率{{food.rating}}%</span>
+			<div class="foods-wrap" ref="foods-wrap">
+				<ul>
+					<li class="food-list food-list-hook" v-for="(item,index) in goods" :key="index">
+						<h1 class="title">{{item.name}}</h1>
+						<ul>
+							<li class="food-item" @click="selectFood(food, $event)" v-for="(food, index) in item.foods" :key="index">
+								<div class="icon">
+									<img :src="food.icon" alt="" width="57" height="57">
 								</div>
-								<div class="price">
-									<span class="now">￥{{food.price}}</span>
-									<s class="old" v-show="food.oldPrice">￥{{food.oldPrice}}</s>
+								<div class="content">
+									<h1 class="name">{{food.name}}</h1>
+									<p class="desc">{{food.description}}</p>
+									<div class="extra">
+										<span class="count">月售{{food.sellCount}}份</span>
+										<span>好评率{{food.rating}}%</span>
+									</div>
+									<div class="price">
+										<span class="now">￥{{food.price}}</span>
+										<s class="old" v-show="food.oldPrice">￥{{food.oldPrice}}</s>
+									</div>
+									<div class="car-control-wrap">
+										<!-- 数量组件 -->
+										<car-control :food="food"></car-control>
+									</div>
 								</div>
-								<div class="car-control-wrap">
-									<!-- 数量组件 -->
-									<car-control :food="food"></car-control>
-								</div>
-							</div>
-						</li>
-					</ul>
-				</li>
-			</ul>
-		</div>
-		<!-- 购物车组件 -->
-		<shop-car :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice" :select-foods="selectFoods"></shop-car>
-    </div>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+			<!-- 购物车组件 -->
+			<shop-car :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice" :select-foods="selectFoods"></shop-car>
+	    </div>
+		
+		<!-- 商品详情组件 -->
+	    <food :food="selectedFood" ref="food"></food>
+	</div>
 </template>
 
 <script>
 import BScroll from 'better-scroll';
 import ShopCar from 'components/shopcar/shop-car';
 import CarControl from 'components/carcontrol/car-control';
+import food from 'components/food/food';
 export default {
-	components: { ShopCar, CarControl },
+	components: { ShopCar, CarControl, food },
 	props: {
 		seller: {
 			type: Object,
@@ -63,7 +69,8 @@ export default {
         	goods: [],
         	classMap: ['decrease', 'discount', 'special', 'invoice', 'guarantee'],
         	listHeight: [], // 存放高度
-        	scrollY: 0
+        	scrollY: 0,
+        	selectedFood: {}
         };
     },
 	created() {
@@ -139,6 +146,13 @@ export default {
 			let foodList = this.$refs['foods-wrap'].querySelectorAll('.food-list-hook');
 			let el = foodList[index];
 			this.foodsScroll.scrollToElement(el, 300);
+		},
+		selectFood(food, event) {
+			if(!event._constructed){
+				return;
+			}
+			this.selectedFood = food;
+			this.$refs.food.show();
 		}
 	}
 }
