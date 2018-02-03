@@ -13,18 +13,16 @@ export default {
 	props: {
 		// 星星尺寸
 		size: {
-			type: Number,
-			required: true
+			type: Number
 		},
 		// 评分
 		score: {
-			type: Number,
-			required: true
+			type: Number
 		}
 	},
     data() {
         return {
-        	
+
         };
     },
     created() {
@@ -110,5 +108,5 @@ export default {
 					bg-image('star24_half')
 				&.off
 					bg-image('star24_off')
-			
+
 </style>

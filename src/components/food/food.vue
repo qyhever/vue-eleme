@@ -25,12 +25,19 @@
 					</div>
 					<div class="buy" @click.stop="addFirst" v-show="!food.count || food.count===0">加入购物车</div>
 				</div>
-			
+
 				<split v-show="food.info"></split>
 
 				<div class="info">
 					<div class="title" v-show="food.info">商品信息</div>
 					<p class="text">{{food.info}}</p>
+				</div>
+
+				<split v-show="food.info"></split>
+
+				<div class="rating">
+					<h1 class="title">商品评价</h1>
+					<rating-select :select-type="selectType" :only-content="onlyContent" :desc="desc" :ratings="food.ratings" @selectType="acceptType" @onlyContent="acceptOnlyContent"></rating-select>
 				</div>
 			</div>
 	    </div>
@@ -41,19 +48,33 @@ import Vue from 'vue';
 import BScroll from 'better-scroll';
 import CarControl from 'components/carcontrol/car-control';
 import split from 'components/split/split';
+import RatingSelect from 'components/ratingselect/rating-select';
+
+const POSITIVE = 0; // 好评
+const NEGATIVE = 1; // 吐槽
+const ALL = 2;
 export default {
-	components: { CarControl, split },
+	components: { CarControl, split, RatingSelect },
 	props: {
 		food: { type: Object }
 	},
     data() {
         return {
-        	showFlag: false
+        	showFlag: false,
+        	selectType: ALL,
+        	onlyContent: true,
+        	desc: {
+        		all: '全部',
+        		positive: '推荐',
+        		negative: '吐槽'
+        	}
         };
     },
     methods: {
     	show() {
     		this.showFlag = true;
+    		this.selectType = ALL;
+    		this.onlyContent = true;
     		this.$nextTick(() => {
     			if (!this.scroll) {
     				this.scroll = new BScroll(this.$refs.food, {
@@ -72,6 +93,12 @@ export default {
     			return;
     		}
     		Vue.set(this.food, 'count', 1);
+    	},
+    	acceptType(data) {
+    		this.selectType = data;
+    	},
+    	acceptOnlyContent(data) {
+    		this.onlyContent = data;
     	}
     }
 }
@@ -167,4 +194,11 @@ export default {
 				padding: 0 8px
 				font-size: 12px
 				color: rgb(77,85,93)
+		.rating
+			padding-top: 18px
+			.title
+				line-height: 14px
+				margin-left: 18px
+				font-size: 14px
+				color: rgb(7,17,27)
 </style>
