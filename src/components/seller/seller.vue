@@ -28,6 +28,10 @@
 						</div>
 					</li>
 				</ul>
+				<div class="favorite" @click="toggleFavorite">
+					<span class="icon-favorite" :class="{'active': favorite}"></span>
+					<span class="text">{{favoriteText}}</span>
+				</div>
 			</div>
 			<!-- 分割组件 -->
 			<split></split>
@@ -59,6 +63,11 @@
 			<split></split>
 			<div class="info">
 				<h1 class="title border-1px"></h1>
+				<ul>
+					<li class="info-item" v-for="(info, index) in seller.infos">
+						{{info}}
+					</li>
+				</ul>
 			</div>
 		</div>
 	</div>
@@ -76,7 +85,13 @@ export default {
 	data() {
 		return {
 			classMap: ['decrease', 'discount', 'special', 'invoice', 'guarantee'],
+			favorite: false
 		};
+	},
+	computed: {
+		favoriteText() {
+			return this.favorite ? '已收藏' : '收藏';
+		}
 	},
 	watch: {
 		'seller'() {
@@ -124,6 +139,12 @@ export default {
 					
 				});
 			}
+		},
+		toggleFavorite(event) {
+			if (!event._constructed) {
+				return;
+			}
+			this.favorite = !this.favorite;
 		}
 	}
 }
@@ -180,6 +201,24 @@ export default {
 						color: rgb(7, 17, 27)
 						.stress
 							font-size: 24px
+			.favorite
+				position: absolute
+				width: 50px
+				right: 11px
+				top: 18px
+				text-align: center
+				.icon-favorite
+					display: block
+					margin-bottom: 4px
+					line-height: 24px
+					font-size: 24px
+					color: #d4d6d9
+					&.active
+						color: rgb(240, 20, 20)
+				.text
+					line-height: 10px
+					font-size: 10px
+					color: rgb(77, 85, 93)
 		.bulletin
 			padding: 18px 18px 0 18px
 			.title
@@ -242,4 +281,19 @@ export default {
 						height: 90px
 						&:last-of-type
 							margin: 0
+		.info
+			padding: 18px 18px 0 18px
+			color: rgb(7, 17, 27)
+			.title
+				padding-bottom: 12px
+				line-height: 14px
+				border-1px(rgba(7, 17, 27, .2))
+				font-size: 14px
+			.info-item
+				padding: 16px 12px
+				line-height: 16px
+				font-size: 12px
+				&:not(:last-of-type)
+					border-1px(rgba(7, 17, 27, .2))
+					
 </style>

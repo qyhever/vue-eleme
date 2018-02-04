@@ -15,7 +15,9 @@
             </div>
         </div>
         <!-- 占位（路由外链） -->
-        <router-view :seller="seller" />
+        <keep-alive>
+            <router-view :seller="seller" />
+        </keep-alive>
     </div>
 </template>
 
