@@ -17,7 +17,12 @@ Vue.prototype.$axios = axios;
 import qs from 'qs';
 Vue.prototype.$qs = qs;
 
-
+// 导入moment.js日期格式化类库
+import moment from 'moment';
+// 定义日期格式化全局过滤器
+Vue.filter('datefmt', function (input, fmtStr) {
+    return moment(input).format(fmtStr);
+});
 
 
 /* eslint-disable no-new */

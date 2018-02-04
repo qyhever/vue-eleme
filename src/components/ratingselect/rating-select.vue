@@ -3,15 +3,15 @@
 		<div class="rating-type border-1px">
 			<div class="block positive" :class="{'active': selectType === 2}" @click="select(2, $event)">
 				{{desc.all}}
-				<span>47</span>
+				<span>{{ratings.length}}</span>
 			</div>
 			<div class="block positive" :class="{'active': selectType === 0}" @click="select(0, $event)">
 				{{desc.positive}}
-				<span>47</span>
+				<span>{{positives.length}}</span>
 			</div>
 			<div class="block negative" :class="{'active': selectType === 1}" @click="select(1, $event)">
 				{{desc.negative}}
-				<span>47</span>
+				<span>{{negatives.length}}</span>
 			</div>
 		</div>
 		<div class="switch" :class="{'on': onlyContent}" @click="toggleContent($event)">
@@ -61,6 +61,19 @@ export default {
     	// console.log(this.selectType)
     	this._selectType = this.selectType;
     	this._onlyContent = this.onlyContent;
+    },
+    computed: {
+    	// 好评的数据条数
+    	positives() {
+    		return this.ratings.filter(rating => {
+    			return rating.rateType === POSITIVE;
+    		});
+    	},
+    	negatives() {
+    		return this.ratings.filter( rating => {
+    			return rating.rateType === NEGATIVE;
+    		})
+    	}
     },
     methods: {
     	select(type, event) {

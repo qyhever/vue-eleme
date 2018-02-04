@@ -37,7 +37,34 @@
 
 				<div class="rating">
 					<h1 class="title">商品评价</h1>
-					<rating-select :select-type="selectType" :only-content="onlyContent" :desc="desc" :ratings="food.ratings" @selectType="acceptType" @onlyContent="acceptOnlyContent"></rating-select>
+					<rating-select
+						:select-type="selectType"
+						:only-content="onlyContent"
+						:desc="desc"
+						:ratings="food.ratings"
+						@selectType="acceptType"
+						@onlyContent="acceptOnlyContent">
+					</rating-select>
+
+					<div class="rating-wrap">
+						<ul v-show="food.ratings && food.ratings.length">
+							<li class="rating-item border-1px"
+							v-show="needShow(rating.reteType, rating.text)"
+							v-for="(rating, index) in food.ratings" :key="index">
+								<div class="user">
+									<div class="name">{{rating.username}}</div>
+									<img class="avatar" :src="rating.avatar" width="12" height="12" alt="">
+								</div>
+								<div class="time">{{rating.rateTime | datefmt('YYYY-MM-DD HH:mm:ss')}}</div>
+								<p class="text">
+									<span :class="{'icon-thumb_up': rating.rateType === 0, 'icon-thumb_down': rating.rateType === 1}"></span>{{rating.text}}
+								</p>
+							</li>
+						</ul>
+						<div class="no-rating" v-show="!food.ratings || food.ratings.length">
+							暂无评价
+						</div>
+					</div>
 				</div>
 			</div>
 	    </div>
@@ -99,11 +126,36 @@ export default {
     	},
     	acceptOnlyContent(data) {
     		this.onlyContent = data;
+    	},
+    	needShow(type, text) {
+    		if (this.onlyContent && !text) {
+    			return false;
+    		}
+    		if (this.selectType === ALL) {
+    			return true;
+    		} else {
+    			return type === this.selectType;
+    		}
+    	}
+    },
+    events: {
+    	acceptType(type) {
+    		this.selectType = type;
+    		this.$nextTick(() => {
+    			this.scroll.refresh();
+    		});
+    	},
+    	acceptOnlyContent(onlyContent) {
+    		this.onlyContent = onlyContent;
+    		this.$nextTick(() => {
+    			this.scroll.refresh();
+    		});
     	}
     }
 }
 </script>
 <style scoped lang="stylus">
+@import '../../common/stylus/mixin'
 	.food
 		z-index: 30
 		position: fixed
@@ -201,4 +253,45 @@ export default {
 				margin-left: 18px
 				font-size: 14px
 				color: rgb(7,17,27)
+			.rating-wrap
+				padding: 0 18px
+				.rating-item
+					position: relative
+					padding: 16px 0
+					border-1px(bottom, rgba(7, 17, 27, .1))
+					.user
+						position: absolute
+						right: 0
+						top: 16px
+						line-height: 12px
+						font-size: 0
+						.name
+							display: inline-block
+							vertical-align: top
+							margin-right: 6px
+							font-size: 10px
+							color: rgb(147, 153, 160)
+						.avatar
+							border-radius: 50%
+					.time
+						margin-bottom: 6px
+						line-height: 12px
+						font-size: 10px
+						color: rgb(147, 153, 160)
+					.text
+						line-height: 16px
+						font-size: 12px
+						color: rgb(7, 17, 27)
+						.icon-thumb_up, .icon-thumb_down
+							margin-right: 4px
+							line-height: 24px
+							font-size: 12px
+						.icon-thumb_up
+							color: rgb(0, 160, 220)	
+						.icon-thumb_down
+							color: rgb(7, 17, 27)
+				.no-rating
+					padding: 16px 0
+					font-size: 12px
+					color: rgb(147, 153, 160)
 </style>
