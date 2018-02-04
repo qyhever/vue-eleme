@@ -6,7 +6,7 @@
 				<div class="desc border-1px">
 					<v-star :size="36" :score="seller.score"></v-star>
 					<span class="text">（{{seller.ratingCount}}）</span>
-					<span class="text">月售{{seller.sellerCount}}单</span>
+					<span class="text">月售{{seller.sellCount}}单</span>
 				</div>
 				<ul class="remark">
 					<li class="block">
@@ -29,21 +29,102 @@
 					</li>
 				</ul>
 			</div>
+			<!-- 分割组件 -->
+			<split></split>
+			<div class="bulletin">
+				<h1 class="title">公告与活动</h1>
+				<div class="content-wrap border-1px">
+					<p class="content">{{seller.bulletin}}</p>
+				</div>
+				<ul class="supports" v-if="seller.supports">
+					<li class="support-item border-1px" v-for="(item, index) in seller.supports" :key="index">
+						<span class="icon" :class="classMap[item.type]"></span>
+						<span class="text">{{item.description}}</span>
+					</li>
+				</ul>
+			</div>
+			<!-- 分割组件 -->
+			<split></split>
+			<div class="photo">
+				<h1 class="title">商家实景</h1>
+				<div class="photo-wrap" ref="photo-wrap">
+					<ul class="photo-list" ref="photo-list">
+						<li class="photo-item" v-for="(pic,index) in seller.pics" :key="index">
+							<img :src="pic" alt="" width="120" height="90">
+						</li>
+					</ul>
+				</div>
+			</div>
+			<!-- 分割组件 -->
+			<split></split>
+			<div class="info">
+				<h1 class="title border-1px"></h1>
+			</div>
 		</div>
 	</div>
 </template>
 
 <script>
+import BScroll from 'better-scroll';
 import VStar from 'components/star/star';
+import split from 'components/split/split';
 export default {
-	components: {VStar},
+	components: {VStar, split},
 	props: {
 		seller: {type: Object}
 	},
 	data() {
 		return {
-
+			classMap: ['decrease', 'discount', 'special', 'invoice', 'guarantee'],
 		};
+	},
+	watch: {
+		'seller'() {
+			this.$nextTick(() => {
+				this._initScroll();
+				this._initPhotoScroll();
+			});
+		}
+	},
+	created() {
+		
+	},
+	mounted() {
+		this.$nextTick(() => {
+			this._initScroll();
+			this._initPhotoScroll();
+		});
+	},
+	methods: {
+		_initScroll() {
+			if (!this.scroll) {
+				this.scroll = new BScroll(this.$refs.seller, {
+					click: true
+				});
+			} else {
+				this.scroll.refresh();
+			}
+		},
+		_initPhotoScroll() {
+			if (this.seller.pics) {
+				let photoWidth = 120;
+				let margin = 6;
+				let width = (photoWidth + margin) * this.seller.pics.length - margin;
+				this.$refs['photo-list'].style.width = width + 'px';
+				this.$nextTick(() => {
+					if (!this.photoScroll) {
+						this.photoScroll = new BScroll(this.$refs['photo-wrap'], {
+							click: true,
+							scrollX: true,
+							eventPassthrough: 'vertical'
+						});
+					} else {
+						this.photoScroll.refresh();
+					}
+					
+				});
+			}
+		}
 	}
 }
 </script>
@@ -99,4 +180,66 @@ export default {
 						color: rgb(7, 17, 27)
 						.stress
 							font-size: 24px
+		.bulletin
+			padding: 18px 18px 0 18px
+			.title
+				margin-bottom: 8px
+				line-height: 14px
+				color: rgb(7, 17, 27)
+				font-size: 14px
+			.content-wrap
+				padding: 0 12px 16px 12px
+				border-1px(rgba(7, 17, 27, .2))
+				.content
+					line-height: 24px
+					font-size: 12px
+					color: rgb(240, 20, 20)
+			.supports
+				.support-item
+					padding: 16px 12px
+					font-size: 0
+					&:not(:last-of-type)
+						border-1px(rgba(7, 17, 27, .2))
+					.icon
+						display: inline-block
+						width: 16px
+						height: 16px
+						vertical-align: top
+						margin-right: 6px
+						background-size: 16px 16px
+						background-repeat: no-repeat
+						&.decrease
+							bg-image('decrease_4')
+						&.discount
+							bg-image('discount_4')
+						&.guarantee
+							bg-image('guarantee_4')
+						&.invoice
+							bg-image('invoice_4')
+						&.special
+							bg-image('special_4')
+					.text
+						line-height: 16px
+						font-size: 12px
+						color: rgb(7, 17, 27)
+		.photo
+			padding: 18px
+			.title
+				margin-bottom: 12px
+				line-height: 14px
+				color: rgb(7, 17, 27)
+				font-size: 14px
+			.photo-wrap
+				width: 100%
+				overflow: hidden
+				white-space: nowrap
+				.photo-list
+					font-size: 0
+					.photo-item
+						display: inline-block
+						margin-right: 6px
+						width: 120px
+						height: 90px
+						&:last-of-type
+							margin: 0
 </style>
