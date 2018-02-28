@@ -10,7 +10,7 @@ import seller from '@/components/seller/seller';
 export default new VueRouter({
     linkActiveClass: 'active', // 激活高亮显示
     routes: [
-        { path: '/', component: goods },
+        { path: '/', redirect: '/goods' },
         { path: '/goods', component: goods },
         { path: '/ratings', component: ratings },
         { path: '/seller', component: seller },

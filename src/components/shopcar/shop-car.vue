@@ -165,6 +165,7 @@ export default {
 			display: flex
 			background: #141d27
 			color: rgba(255,255,255,.4)
+			height: 100%
 			.content-left
 				flex: 1
 				font-size: 0
@@ -232,6 +233,7 @@ export default {
 				justify-content: center
 				align-items: center
 				width: 105px
+				height: 100%
 				&.not-enough
 					background: #2B333B
 				&.enough
